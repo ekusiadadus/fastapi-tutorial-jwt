@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    volumes:
+      - ./db/data:/var/lib/mysql
+      - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./db/initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
+    command: --port 3306
+    tty: true
+
+  api:
+    depends_on:
+      - db
+    container_name: "api"
+    build: ./app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./be/api:/usr/src/server
